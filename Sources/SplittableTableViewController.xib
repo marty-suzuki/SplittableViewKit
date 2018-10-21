@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14313.18" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina5_5" orientation="landscape">
+        <adaptation id="fullscreen"/>
+    </device>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14283.14"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="SplittableTableViewController" customModule="SplittableTableView" customModuleProvider="target">
+            <connections>
+                <outlet property="_leftView" destination="Tf8-nx-hLX" id="FGi-5n-CwJ"/>
+                <outlet property="tableView" destination="Utr-j0-Skj" id="AQX-JA-Djw"/>
+                <outlet property="view" destination="i5M-Pr-FkT" id="sfx-zR-JGt"/>
+            </connections>
+        </placeholder>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view clearsContextBeforeDrawing="NO" contentMode="scaleToFill" id="i5M-Pr-FkT">
+            <rect key="frame" x="0.0" y="0.0" width="736" height="414"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <subviews>
+                <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="uE3-om-vrD">
+                    <rect key="frame" x="0.0" y="0.0" width="736" height="414"/>
+                    <subviews>
+                        <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Tf8-nx-hLX">
+                            <rect key="frame" x="0.0" y="0.0" width="245.33333333333334" height="414"/>
+                            <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                            <variation key="heightClass=regular" hidden="YES"/>
+                        </view>
+                        <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="Utr-j0-Skj">
+                            <rect key="frame" x="245.33333333333334" y="0.0" width="490.66666666666663" height="414"/>
+                            <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        </tableView>
+                    </subviews>
+                    <constraints>
+                        <constraint firstItem="Utr-j0-Skj" firstAttribute="width" secondItem="Tf8-nx-hLX" secondAttribute="width" multiplier="2" id="jvw-LZ-ZhJ"/>
+                    </constraints>
+                    <variation key="default">
+                        <mask key="constraints">
+                            <exclude reference="jvw-LZ-ZhJ"/>
+                        </mask>
+                    </variation>
+                    <variation key="heightClass=compact" axis="horizontal">
+                        <mask key="constraints">
+                            <include reference="jvw-LZ-ZhJ"/>
+                        </mask>
+                    </variation>
+                </stackView>
+            </subviews>
+            <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <constraints>
+                <constraint firstItem="uE3-om-vrD" firstAttribute="leading" secondItem="fnl-2z-Ty3" secondAttribute="leading" id="Ehl-3S-Ppm"/>
+                <constraint firstItem="uE3-om-vrD" firstAttribute="width" secondItem="i5M-Pr-FkT" secondAttribute="width" id="RnV-PD-wVE"/>
+                <constraint firstAttribute="bottom" secondItem="uE3-om-vrD" secondAttribute="bottom" id="dBU-UE-iz4"/>
+                <constraint firstItem="fnl-2z-Ty3" firstAttribute="trailing" secondItem="uE3-om-vrD" secondAttribute="trailing" id="jUL-fE-fpj"/>
+                <constraint firstItem="uE3-om-vrD" firstAttribute="top" secondItem="i5M-Pr-FkT" secondAttribute="top" id="m8d-U9-BEq"/>
+            </constraints>
+            <viewLayoutGuide key="safeArea" id="fnl-2z-Ty3"/>
+            <variation key="default">
+                <mask key="constraints">
+                    <exclude reference="RnV-PD-wVE"/>
+                </mask>
+            </variation>
+            <variation key="heightClass=regular-widthClass=compact">
+                <mask key="constraints">
+                    <include reference="RnV-PD-wVE"/>
+                </mask>
+            </variation>
+            <variation key="heightClass=regular-widthClass=regular">
+                <mask key="constraints">
+                    <include reference="RnV-PD-wVE"/>
+                </mask>
+            </variation>
+            <point key="canvasLocation" x="138.40000000000001" y="153.37331334332833"/>
+        </view>
+    </objects>
+</document>
