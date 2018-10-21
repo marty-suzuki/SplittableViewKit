@@ -54,7 +54,7 @@ extension ViewController: SplittableTableViewControllerDataSource {
             view.leadingAnchor.constraint(equalTo: leftView.leadingAnchor, constant: 0),
             view.trailingAnchor.constraint(equalTo: leftView.trailingAnchor, constant: 0),
             view.centerYAnchor.constraint(equalTo: leftView.centerYAnchor, constant: 0)
-            ])
+        ])
     }
 }
 

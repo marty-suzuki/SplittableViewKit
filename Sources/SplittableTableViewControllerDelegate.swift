@@ -34,7 +34,9 @@ public protocol SplittableTableViewControllerDelegate: AnyObject {
     func splittableTableViewController(tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCell.EditingStyle
     func splittableTableViewController(tableView: UITableView, titleForDeleteConfirmationButtonForRowAt indexPath: IndexPath) -> String?
     func splittableTableViewController(tableView: UITableView, editActionsForRowAt indexPath: IndexPath) -> [UITableViewRowAction]?
+    @available(iOS 11, *)
     func splittableTableViewController(tableView: UITableView, leadingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration?
+    @available(iOS 11, *)
     func splittableTableViewController(tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration?
     func splittableTableViewController(tableView: UITableView, shouldIndentWhileEditingRowAt indexPath: IndexPath) -> Bool
     func splittableTableViewController(tableView: UITableView, willBeginEditingRowAt indexPath: IndexPath)
@@ -48,6 +50,7 @@ public protocol SplittableTableViewControllerDelegate: AnyObject {
     func splittableTableViewController(tableView: UITableView, shouldUpdateFocusIn context: UITableViewFocusUpdateContext) -> Bool
     func splittableTableViewController(tableView: UITableView, didUpdateFocusIn context: UITableViewFocusUpdateContext, with coordinator: UIFocusAnimationCoordinator)
     func splittableTableViewControllerIndexPathForPreferredFocusedView(in tableView: UITableView) -> IndexPath?
+    @available(iOS 11, *)
     func splittableTableViewController(tableView: UITableView, shouldSpringLoadRowAt indexPath: IndexPath, with context: UISpringLoadedInteractionContext) -> Bool
 }
 
@@ -105,9 +108,11 @@ extension SplittableTableViewControllerDelegate {
     public func splittableTableViewController(tableView: UITableView, editActionsForRowAt indexPath: IndexPath) -> [UITableViewRowAction]? {
         return nil
     }
+    @available(iOS 11, *)
     public func splittableTableViewController(tableView: UITableView, leadingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         return nil
     }
+    @available(iOS 11, *)
     public func splittableTableViewController(tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         return nil
     }
@@ -139,6 +144,7 @@ extension SplittableTableViewControllerDelegate {
     public func splittableTableViewControllerIndexPathForPreferredFocusedView(in tableView: UITableView) -> IndexPath? {
         return nil
     }
+    @available(iOS 11, *)
     public func splittableTableViewController(tableView: UITableView, shouldSpringLoadRowAt indexPath: IndexPath, with context: UISpringLoadedInteractionContext) -> Bool {
         return false
     }

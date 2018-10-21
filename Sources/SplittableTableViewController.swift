@@ -14,22 +14,25 @@ open class SplittableTableViewController: UIViewController {
         static let cellReuseIdentifier = "SplittableTableViewController.UITableViewCell"
     }
 
-    @IBOutlet private(set) weak var _leftView: UIView!
-    @IBOutlet public private(set) weak var tableView: UITableView! {
-        didSet {
-            tableView.dataSource = self
-            tableView.delegate = self
-            tableView.register(UITableViewCell.self,
-                               forCellReuseIdentifier: Const.cellReuseIdentifier)
-        }
-    }
+    private let _leftView = UIView(frame: .zero)
+    private let _stackView = UIStackView(frame: .zero)
+    private lazy var _leftViewAndRightViewWidthConstraint: NSLayoutConstraint = {
+        return NSLayoutConstraint(item: _leftView,
+                                  attribute: .width,
+                                  relatedBy: .equal,
+                                  toItem: tableView,
+                                  attribute: .width,
+                                  multiplier: 1 / 2,
+                                  constant: 0)
+    }()
 
     public weak var dataSource: SplittableTableViewControllerDataSource?
     public weak var delegate: SplittableTableViewControllerDelegate?
 
+    public let tableView = UITableView(frame: .zero)
     public var leftView: UIView? {
-        if isLandscape, let leftView = _leftView {
-            return leftView
+        if isLandscape {
+            return _leftView
         } else {
             return nil
         }
@@ -40,12 +43,45 @@ open class SplittableTableViewController: UIViewController {
     }
 
     public init() {
-        super.init(nibName: "SplittableTableViewController",
-                   bundle: Bundle(for: SplittableTableViewController.self))
+        super.init(nibName: nil, bundle: nil)
     }
 
     required public init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
+    }
+
+    open override func viewDidLoad() {
+        super.viewDidLoad()
+
+        view.backgroundColor = .white
+
+        _stackView.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(_stackView)
+        if #available(iOS 11, *) {
+        NSLayoutConstraint.activate([
+            view.topAnchor.constraint(equalTo: _stackView.topAnchor),
+            view.safeAreaLayoutGuideIfExists.leftAnchor.constraint(equalTo: _stackView.leftAnchor),
+            view.safeAreaLayoutGuideIfExists.rightAnchor.constraint(equalTo: _stackView.rightAnchor),
+            view.bottomAnchor.constraint(equalTo: _stackView.bottomAnchor)
+        ])
+        } else {
+            NSLayoutConstraint.activate([
+                view.topAnchor.constraint(equalTo: _stackView.topAnchor),
+                view.leftAnchor.constraint(equalTo: _stackView.leftAnchor),
+                view.rightAnchor.constraint(equalTo: _stackView.rightAnchor),
+                view.bottomAnchor.constraint(equalTo: _stackView.bottomAnchor)
+            ])
+        }
+
+        _leftView.translatesAutoresizingMaskIntoConstraints = false
+        _stackView.addArrangedSubview(_leftView)
+        tableView.translatesAutoresizingMaskIntoConstraints = false
+        _stackView.addArrangedSubview(tableView)
+
+        tableView.dataSource = self
+        tableView.delegate = self
+        tableView.register(UITableViewCell.self,
+                           forCellReuseIdentifier: Const.cellReuseIdentifier)
     }
 
     open override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
@@ -53,6 +89,8 @@ open class SplittableTableViewController: UIViewController {
             _leftView.subviews.forEach { $0.removeFromSuperview() }
             tableView.reloadData()
         }
+        _leftView.isHidden = !isLandscape
+        _leftViewAndRightViewWidthConstraint.isActive = isLandscape
         super.traitCollectionDidChange(previousTraitCollection)
     }
 }
