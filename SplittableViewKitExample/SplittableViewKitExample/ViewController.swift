@@ -14,13 +14,18 @@ final class ViewController: SplittableTableViewController {
         static let cellReuseIdentifier = "Cell"
     }
 
-    private let colors: [UIColor] = [
-        .red,
-        .green,
-        .blue,
-        .yellow,
-        .white,
-        .black
+    private enum RowStyle {
+        case thumbnail
+        case title
+        case introduction
+        case information
+    }
+
+    private let rows: [RowStyle] = [
+        .thumbnail,
+        .title,
+        .introduction,
+        .information
     ]
 
     override func viewDidLoad() {
@@ -30,31 +35,48 @@ final class ViewController: SplittableTableViewController {
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: Const.cellReuseIdentifier)
         tableView.register(UINib(nibName: "ThumbnailViewCell", bundle: nil),
                            forCellReuseIdentifier: "ThumbnailViewCell")
+        tableView.register(UINib(nibName: "TitleViewCell", bundle: nil),
+                           forCellReuseIdentifier: "TitleViewCell")
+
+        tableView.register(UINib(nibName: "IntroductionViewCell", bundle: nil),
+                           forCellReuseIdentifier: "IntroductionViewCell")
+
+        tableView.register(UINib(nibName: "InformationViewCell", bundle: nil),
+                           forCellReuseIdentifier: "InformationViewCell")
     }
 }
 
-extension ViewController: SplittableTableViewControllerDataSource {    
-    func splittableTableViewController(tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        if indexPath.row == 0 {
+extension ViewController: SplittableTableViewControllerDataSource {
+    func splittable(tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+
+        switch rows[indexPath.row] {
+        case .thumbnail:
             return tableView.dequeueReusableCell(withIdentifier: "ThumbnailViewCell", for: indexPath)
+        case .title:
+            return tableView.dequeueReusableCell(withIdentifier: "TitleViewCell", for: indexPath)
+
+        case .introduction:
+            return tableView.dequeueReusableCell(withIdentifier: "IntroductionViewCell", for: indexPath)
+
+        case .information:
+            return tableView.dequeueReusableCell(withIdentifier: "InformationViewCell", for: indexPath)
         }
-        let cell = tableView.dequeueReusableCell(withIdentifier: Const.cellReuseIdentifier, for: indexPath)
-        cell.backgroundColor = colors[indexPath.row]
-        return cell
     }
 
-    func splittableTableViewController(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return colors.count
+    func splittable(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return rows.count
     }
 
-    func splittableTableViewControllerWillMoveTopView(view: UIView, to leftView: UIView) {
-        leftView.addSubview(view)
-        view.translatesAutoresizingMaskIntoConstraints = false
+    func splittableViewForLeftView(topView: UIView) -> UIView {
+        let view = UIView(frame: .zero)
+        topView.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(topView)
         NSLayoutConstraint.activate([
-            view.leadingAnchor.constraint(equalTo: leftView.leadingAnchor, constant: 0),
-            view.trailingAnchor.constraint(equalTo: leftView.trailingAnchor, constant: 0),
-            view.centerYAnchor.constraint(equalTo: leftView.centerYAnchor, constant: 0)
+            view.leadingAnchor.constraint(equalTo: topView.leadingAnchor, constant: 0),
+            view.trailingAnchor.constraint(equalTo: topView.trailingAnchor, constant: 0),
+            view.centerYAnchor.constraint(equalTo: topView.centerYAnchor, constant: 0)
         ])
+        return view
     }
 }
 

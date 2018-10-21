@@ -10,21 +10,11 @@ import UIKit
 
 open class SplittableTableViewController: UIViewController {
 
-    private enum Const {
-        static let cellReuseIdentifier = "SplittableTableViewController.UITableViewCell"
-    }
-
     private let _leftView = UIView(frame: .zero)
     private let _stackView = UIStackView(frame: .zero)
-    private lazy var _leftViewAndRightViewWidthConstraint: NSLayoutConstraint = {
-        return NSLayoutConstraint(item: _leftView,
-                                  attribute: .width,
-                                  relatedBy: .equal,
-                                  toItem: tableView,
-                                  attribute: .width,
-                                  multiplier: 1 / 2,
-                                  constant: 0)
-    }()
+    private lazy var _leftViewAndRightViewWidthConstraint = makeLeftViewAndRightViewWidthConstraint()
+
+    private var topView: UIView?
 
     public weak var dataSource: SplittableTableViewControllerDataSource?
     public weak var delegate: SplittableTableViewControllerDelegate?
@@ -42,12 +32,26 @@ open class SplittableTableViewController: UIViewController {
         return traitCollection.verticalSizeClass == .compact
     }
 
-    public init() {
+    public var ratio: Ratio
+
+    public init(ratio: Ratio = .default) {
+        self.ratio = ratio
         super.init(nibName: nil, bundle: nil)
     }
 
     required public init?(coder aDecoder: NSCoder) {
+        self.ratio = .default
         super.init(coder: aDecoder)
+    }
+
+    private func makeLeftViewAndRightViewWidthConstraint() -> NSLayoutConstraint {
+        return NSLayoutConstraint(item: _leftView,
+                                  attribute: .width,
+                                  relatedBy: .equal,
+                                  toItem: tableView,
+                                  attribute: .width,
+                                  multiplier: ratio.left / ratio.right,
+                                  constant: 0)
     }
 
     open override func viewDidLoad() {
@@ -57,21 +61,13 @@ open class SplittableTableViewController: UIViewController {
 
         _stackView.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(_stackView)
-        if #available(iOS 11, *) {
+
         NSLayoutConstraint.activate([
             view.topAnchor.constraint(equalTo: _stackView.topAnchor),
             view.safeAreaLayoutGuideIfExists.leftAnchor.constraint(equalTo: _stackView.leftAnchor),
             view.safeAreaLayoutGuideIfExists.rightAnchor.constraint(equalTo: _stackView.rightAnchor),
             view.bottomAnchor.constraint(equalTo: _stackView.bottomAnchor)
         ])
-        } else {
-            NSLayoutConstraint.activate([
-                view.topAnchor.constraint(equalTo: _stackView.topAnchor),
-                view.leftAnchor.constraint(equalTo: _stackView.leftAnchor),
-                view.rightAnchor.constraint(equalTo: _stackView.rightAnchor),
-                view.bottomAnchor.constraint(equalTo: _stackView.bottomAnchor)
-            ])
-        }
 
         _leftView.translatesAutoresizingMaskIntoConstraints = false
         _stackView.addArrangedSubview(_leftView)
@@ -89,9 +85,61 @@ open class SplittableTableViewController: UIViewController {
             _leftView.subviews.forEach { $0.removeFromSuperview() }
             tableView.reloadData()
         }
+        if !isLandscape {
+            topView?.removeFromSuperview()
+            topView = nil
+        }
         _leftView.isHidden = !isLandscape
+
+        _leftViewAndRightViewWidthConstraint.isActive = false
+        _leftViewAndRightViewWidthConstraint = makeLeftViewAndRightViewWidthConstraint()
         _leftViewAndRightViewWidthConstraint.isActive = isLandscape
+
         super.traitCollectionDidChange(previousTraitCollection)
+    }
+
+    private func makeTopView(with cell: UITableViewCell) -> UIView {
+        let contentViews: [(UIView, [NSLayoutConstraint])] = cell.contentView
+            .subviews
+            .reduce([(UIView, [NSLayoutConstraint])]()) { result, view in
+                result + [(view, view.constraints)]
+        }
+        let constraints = cell.contentView.constraints
+
+        let view = UIView(frame: .zero)
+        view.translatesAutoresizingMaskIntoConstraints = false
+        contentViews.forEach { values in
+            let (subview, constraints) = values
+            view.addSubview(subview)
+            subview.translatesAutoresizingMaskIntoConstraints = false
+            constraints.forEach { constraint in
+                if let constraint = ConstraintReplacer
+                    .replacedIfNeeded(constraint,
+                                      from: cell.contentView,
+                                      to: view) {
+                    view.addConstraint(constraint)
+                } else {
+                    subview.addConstraint(constraint)
+                }
+            }
+        }
+
+        constraints.forEach { constraint in
+            if constraint.identifier?.contains("UIView-Encapsulated-Layout") == true {
+                return
+            }
+
+            if let constraint = ConstraintReplacer
+                .replacedIfNeeded(constraint,
+                                  from: cell.contentView,
+                                  to: view) {
+                view.addConstraint(constraint)
+            } else {
+                view.addConstraint(constraint)
+            }
+        }
+
+        return view
     }
 }
 
@@ -102,64 +150,23 @@ extension SplittableTableViewController: UITableViewDataSource {
     }
 
     public func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return dataSource?.splittableTableViewController(tableView: tableView, numberOfRowsInSection: section) ?? 0
+        return dataSource?.splittable(tableView: tableView, numberOfRowsInSection: section) ?? 0
     }
 
     public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let dataSource = self.dataSource ?? { fatalError("data source not found") }()
-        let cell = dataSource.splittableTableViewController(tableView: tableView, cellForRowAt: indexPath)
+        let cell = dataSource.splittable(tableView: tableView, cellForRowAt: indexPath)
 
         if isLandscapeTopIndexPath(indexPath) {
-            if _leftView.subviews.count < 1 {
-                let contentViews: [(UIView, [NSLayoutConstraint])] = cell.contentView
-                    .subviews
-                    .reduce([(UIView, [NSLayoutConstraint])]()) { result, view in
-                        result + [(view, view.constraints)]
-                }
-                let constraints = cell.contentView.constraints
-
-                let view = UIView(frame: .zero)
-                view.translatesAutoresizingMaskIntoConstraints = false
-                contentViews.forEach { values in
-                    let (subview, constraints) = values
-                    view.addSubview(subview)
-                    subview.translatesAutoresizingMaskIntoConstraints = false
-                    constraints.forEach { constraint in
-                        if (constraint.firstItem as? UIView) == cell.contentView {
-                            var builder = ConstraintBuilder(constraint)
-                            builder.firstItem = view
-                            view.addConstraint(builder.build())
-                        } else if (constraint.secondItem as? UIView) == cell.contentView {
-                            var builder = ConstraintBuilder(constraint)
-                            builder.secondItem = view
-                            view.addConstraint(builder.build())
-                        } else {
-                            subview.addConstraint(constraint)
-                        }
-                    }
-                }
-
-                constraints.forEach { constraint in
-                    if constraint.identifier?.contains("UIView-Encapsulated-Layout") == true {
-                        return
-                    }
-
-                    if (constraint.firstItem as? UIView) == cell.contentView {
-                        var builder = ConstraintBuilder(constraint)
-                        builder.firstItem = view
-                        view.addConstraint(builder.build())
-                    } else if (constraint.secondItem as? UIView) == cell.contentView {
-                        var builder = ConstraintBuilder(constraint)
-                        builder.secondItem = view
-                        view.addConstraint(builder.build())
-                    } else {
-                        view.addConstraint(constraint)
-                    }
-                }
-                dataSource.splittableTableViewControllerWillMoveTopView(view: view, to: _leftView)
-            } else {
-                cell.removeFromSuperview()
+            if topView == nil {
+                let topView = makeTopView(with: cell)
+                let view = dataSource.splittableViewForLeftView(topView: topView)
+                _leftView.addSubview(view)
+                view.frame = _leftView.bounds
+                view.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+                self.topView = topView
             }
+            cell.removeFromSuperview()
             return tableView.dequeueReusableCell(withIdentifier: Const.cellReuseIdentifier) ?? { fatalError("") }()
         } else {
             return cell
@@ -167,35 +174,35 @@ extension SplittableTableViewController: UITableViewDataSource {
     }
 
     public func numberOfSections(in tableView: UITableView) -> Int {
-        return dataSource?.splittableTableViewControllerNumberOfSections(in: tableView) ?? 1
+        return dataSource?.splittableNumberOfSections(in: tableView) ?? 1
     }
 
     public func tableView(_ tableView: UITableView, titleForFooterInSection section: Int) -> String? {
-        return dataSource?.splittableTableViewController(tableView: tableView, titleForFooterInSection: section)
+        return dataSource?.splittable(tableView: tableView, titleForFooterInSection: section)
     }
 
     public func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
-        return dataSource?.splittableTableViewController(tableView: tableView, canEditRowAt: indexPath) ?? false
+        return dataSource?.splittable(tableView: tableView, canEditRowAt: indexPath) ?? false
     }
 
     public func tableView(_ tableView: UITableView, canMoveRowAt indexPath: IndexPath) -> Bool {
-        return dataSource?.splittableTableViewController(tableView: tableView, canMoveRowAt: indexPath) ?? false
+        return dataSource?.splittable(tableView: tableView, canMoveRowAt: indexPath) ?? false
     }
 
     public func sectionIndexTitles(for tableView: UITableView) -> [String]? {
-        return dataSource?.splittableTableViewControllerSectionIndexTitles(for: tableView)
+        return dataSource?.splittableSectionIndexTitles(for: tableView)
     }
 
     public func tableView(_ tableView: UITableView, sectionForSectionIndexTitle title: String, at index: Int) -> Int {
-        return dataSource?.splittableTableViewController(tableView: tableView, sectionForSectionIndexTitle: title, at: index) ?? index
+        return dataSource?.splittable(tableView: tableView, sectionForSectionIndexTitle: title, at: index) ?? index
     }
 
     public func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
-        dataSource?.splittableTableViewController(tableView: tableView, commit: editingStyle, forRowAt: indexPath)
+        dataSource?.splittable(tableView: tableView, commit: editingStyle, forRowAt: indexPath)
     }
 
     public func tableView(_ tableView: UITableView, moveRowAt sourceIndexPath: IndexPath, to destinationIndexPath: IndexPath) {
-        dataSource?.splittableTableViewController(tableView: tableView, moveRowAt: sourceIndexPath, to: destinationIndexPath)
+        dataSource?.splittable(tableView: tableView, moveRowAt: sourceIndexPath, to: destinationIndexPath)
     }
 }
 
@@ -210,6 +217,24 @@ extension SplittableTableViewController: UITableViewDelegate {
         } else {
             return delegate?.splittableTableViewController(tableView: tableView, heightForRowAt: indexPath)
                 ?? UITableViewAutomaticDimension
+        }
+    }
+}
+
+extension SplittableTableViewController {
+    private enum Const {
+        static let cellReuseIdentifier = "SplittableTableViewController.UITableViewCell"
+    }
+
+    public struct Ratio {
+        public static let `default` = Ratio(left: 1, right: 2)
+
+        public let left: CGFloat
+        public let right: CGFloat
+
+        public init(left: CGFloat, right: CGFloat) {
+            self.left = left
+            self.right = right
         }
     }
 }
