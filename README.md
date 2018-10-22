@@ -5,6 +5,12 @@
 [![License](https://img.shields.io/cocoapods/l/SplittableViewKit.svg?style=flat)](https://cocoapods.org/pods/SplittableViewKit)
 [![Platform](https://img.shields.io/cocoapods/p/SplittableViewKit.svg?style=flat)](https://cocoapods.org/pods/SplittableViewKit)
 
+![](./Images/sample.gif)
+
+| Normal | Fixed |
+| :-: | :-: |
+| ![](./Images/normal.gif) | ![](./Images/fixed.gif) |
+
 ## Example
 
 To run the example project, clone the repo, and run `pod install` from the Example directory first.
