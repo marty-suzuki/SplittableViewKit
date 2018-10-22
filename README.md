@@ -60,6 +60,18 @@ extension ViewController: SplittableTableViewDataSource {
 | :-: | :-: |
 | ![](./Images/normal.gif) | ![](./Images/fixed.gif) |
 
+You can change ratio of leftView and rightView with `SplittableTableView.ratio`.
+
+```swift
+splittableTableView.ratio = .init(left: 1, right: 2)
+```
+
+You can change fixed top or not with `SplittableTableView.isFixedTop`.
+
+```swift
+splittableTableView.isFixedTop = true
+```
+
 ## Example
 
 To run the example project, clone the repo, and run `pod install` from the `SplittableViewKitExample` directory first.
