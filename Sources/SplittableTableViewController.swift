@@ -16,8 +16,25 @@ open class SplittableTableViewController: UIViewController {
 
     private var topView: UIView?
 
-    public weak var dataSource: SplittableTableViewControllerDataSource?
-    public weak var delegate: SplittableTableViewControllerDelegate?
+    public var dataSource: SplittableTableViewDataSource? {
+        set {
+            _dataSourceProxy.dataSource = newValue
+        }
+        get {
+            return _dataSourceProxy.dataSource
+        }
+    }
+    private lazy var _dataSourceProxy = SplittableTableViewDataSourceProxy(proxy: self)
+
+    public var delegate: SplittableTableViewDelegate? {
+        set {
+            _delegateProxy.delegate = newValue
+        }
+        get {
+            return _delegateProxy.delegate
+        }
+    }
+    private lazy var _delegateProxy = SplittableTableViewDelegateProxy(proxy: self)
 
     public let tableView = UITableView(frame: .zero)
     public var leftView: UIView? {
@@ -74,8 +91,8 @@ open class SplittableTableViewController: UIViewController {
         tableView.translatesAutoresizingMaskIntoConstraints = false
         _stackView.addArrangedSubview(tableView)
 
-        tableView.dataSource = self
-        tableView.delegate = self
+        tableView.dataSource = _dataSourceProxy
+        tableView.delegate = _delegateProxy
         tableView.register(UITableViewCell.self,
                            forCellReuseIdentifier: Const.cellReuseIdentifier)
     }
@@ -143,80 +160,36 @@ open class SplittableTableViewController: UIViewController {
     }
 }
 
-extension SplittableTableViewController: UITableViewDataSource {
+extension SplittableTableViewController: SplittableTableViewDataSourceProxyDataSource {
 
     private func isLandscapeTopIndexPath(_ indexPath: IndexPath) -> Bool {
         return indexPath.section == 0 && indexPath.row == 0 && isLandscape
     }
 
-    public func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return dataSource?.splittable(tableView: tableView, numberOfRowsInSection: section) ?? 0
-    }
-
-    public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let dataSource = self.dataSource ?? { fatalError("data source not found") }()
-        let cell = dataSource.splittable(tableView: tableView, cellForRowAt: indexPath)
-
+    func proxy(tableView: UITableView, cellForRowAt indexPath: IndexPath, cell: UITableViewCell) -> UITableViewCell {
         if isLandscapeTopIndexPath(indexPath) {
             if topView == nil {
                 let topView = makeTopView(with: cell)
-                let view = dataSource.splittableViewForLeftView(topView: topView)
+                let view = dataSource?.splittableViewForLeftView(topView: topView) ?? Undefined.object()
                 _leftView.addSubview(view)
                 view.frame = _leftView.bounds
                 view.autoresizingMask = [.flexibleWidth, .flexibleHeight]
                 self.topView = topView
             }
             cell.removeFromSuperview()
-            return tableView.dequeueReusableCell(withIdentifier: Const.cellReuseIdentifier) ?? { fatalError("") }()
+            return tableView.dequeueReusableCell(withIdentifier: Const.cellReuseIdentifier) ?? Undefined.object()
         } else {
             return cell
         }
     }
-
-    public func numberOfSections(in tableView: UITableView) -> Int {
-        return dataSource?.splittableNumberOfSections(in: tableView) ?? 1
-    }
-
-    public func tableView(_ tableView: UITableView, titleForFooterInSection section: Int) -> String? {
-        return dataSource?.splittable(tableView: tableView, titleForFooterInSection: section)
-    }
-
-    public func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
-        return dataSource?.splittable(tableView: tableView, canEditRowAt: indexPath) ?? false
-    }
-
-    public func tableView(_ tableView: UITableView, canMoveRowAt indexPath: IndexPath) -> Bool {
-        return dataSource?.splittable(tableView: tableView, canMoveRowAt: indexPath) ?? false
-    }
-
-    public func sectionIndexTitles(for tableView: UITableView) -> [String]? {
-        return dataSource?.splittableSectionIndexTitles(for: tableView)
-    }
-
-    public func tableView(_ tableView: UITableView, sectionForSectionIndexTitle title: String, at index: Int) -> Int {
-        return dataSource?.splittable(tableView: tableView, sectionForSectionIndexTitle: title, at: index) ?? index
-    }
-
-    public func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
-        dataSource?.splittable(tableView: tableView, commit: editingStyle, forRowAt: indexPath)
-    }
-
-    public func tableView(_ tableView: UITableView, moveRowAt sourceIndexPath: IndexPath, to destinationIndexPath: IndexPath) {
-        dataSource?.splittable(tableView: tableView, moveRowAt: sourceIndexPath, to: destinationIndexPath)
-    }
 }
 
-#if swift(>=4.2)
-let UITableViewAutomaticDimension = UITableView.automaticDimension
-#endif
-
-extension SplittableTableViewController: UITableViewDelegate {
-    public func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+extension SplittableTableViewController: SplittableTableViewDelegateProxyDelegate {
+    func proxy(tableView: UITableView, heightForRowAt indexPath: IndexPath, height: CGFloat) -> CGFloat {
         if isLandscapeTopIndexPath(indexPath) {
             return CGFloat.leastNonzeroMagnitude
         } else {
-            return delegate?.splittableTableViewController(tableView: tableView, heightForRowAt: indexPath)
-                ?? UITableViewAutomaticDimension
+            return height
         }
     }
 }

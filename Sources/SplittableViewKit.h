@@ -7,6 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "_NSObjectProxy.h"
 
 //! Project version number for SplittableViewKit.
 FOUNDATION_EXPORT double SplittableViewKitVersionNumber;

@@ -46,9 +46,12 @@ final class ViewController: SplittableTableViewController {
     }
 }
 
-extension ViewController: SplittableTableViewControllerDataSource {
-    func splittable(tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+extension ViewController: SplittableTableViewDataSource {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return rows.count
+    }
 
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         switch rows[indexPath.row] {
         case .thumbnail:
             return tableView.dequeueReusableCell(withIdentifier: "ThumbnailViewCell", for: indexPath)
@@ -61,10 +64,6 @@ extension ViewController: SplittableTableViewControllerDataSource {
         case .information:
             return tableView.dequeueReusableCell(withIdentifier: "InformationViewCell", for: indexPath)
         }
-    }
-
-    func splittable(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return rows.count
     }
 
     func splittableViewForLeftView(topView: UIView) -> UIView {
