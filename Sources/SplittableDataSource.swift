@@ -9,5 +9,10 @@
 import UIKit
 
 public protocol SplittableDataSource: AnyObject {
-    func splittableViewForLeftView(topView: UIView, isLandscape: Bool) -> UIView
+    func splittableContainerViewFor(topView: UIView, layoutType: LayoutType) -> UIView
+}
+
+public enum LayoutType {
+    case fixedTop
+    case left
 }

@@ -46,9 +46,34 @@ final class ViewController: UIViewController {
         splittableTableView.rightView.register(UINib(nibName: "InformationViewCell", bundle: nil),
                                                forCellReuseIdentifier: "InformationViewCell")
     }
+
+    @IBAction func switchChanged(_ sender: UISwitch) {
+        splittableTableView.isFixedTop = sender.isOn
+    }
 }
 
 extension ViewController: SplittableTableViewDataSource {
+    func splittableContainerViewFor(topView: UIView, layoutType: LayoutType) -> UIView {
+        let view = UIView(frame: .zero)
+        topView.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(topView)
+        if layoutType == .left {
+            NSLayoutConstraint.activate([
+                view.leadingAnchor.constraint(equalTo: topView.leadingAnchor, constant: 0),
+                view.trailingAnchor.constraint(equalTo: topView.trailingAnchor, constant: 0),
+                view.centerYAnchor.constraint(equalTo: topView.centerYAnchor, constant: 0)
+            ])
+        } else {
+            NSLayoutConstraint.activate([
+                view.safeAreaLayoutGuide.topAnchor.constraint(equalTo: topView.topAnchor, constant: 0),
+                view.leftAnchor.constraint(equalTo: topView.leftAnchor, constant: 0),
+                view.rightAnchor.constraint(equalTo: topView.rightAnchor, constant: 0),
+                view.bottomAnchor.constraint(equalTo: topView.bottomAnchor, constant: 0)
+            ])
+        }
+        return view
+    }
+
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return rows.count
     }
@@ -66,27 +91,6 @@ extension ViewController: SplittableTableViewDataSource {
         case .information:
             return tableView.dequeueReusableCell(withIdentifier: "InformationViewCell", for: indexPath)
         }
-    }
-
-    func splittableViewForLeftView(topView: UIView, isLandscape: Bool) -> UIView {
-        let view = UIView(frame: .zero)
-        topView.translatesAutoresizingMaskIntoConstraints = false
-        view.addSubview(topView)
-        if isLandscape {
-            NSLayoutConstraint.activate([
-                view.leadingAnchor.constraint(equalTo: topView.leadingAnchor, constant: 0),
-                view.trailingAnchor.constraint(equalTo: topView.trailingAnchor, constant: 0),
-                view.centerYAnchor.constraint(equalTo: topView.centerYAnchor, constant: 0)
-            ])
-        } else {
-            NSLayoutConstraint.activate([
-                view.safeAreaLayoutGuide.topAnchor.constraint(equalTo: topView.topAnchor, constant: 0),
-                view.leftAnchor.constraint(equalTo: topView.leftAnchor, constant: 0),
-                view.rightAnchor.constraint(equalTo: topView.rightAnchor, constant: 0),
-                view.bottomAnchor.constraint(equalTo: topView.bottomAnchor, constant: 0)
-            ])
-        }
-        return view
     }
 }
 

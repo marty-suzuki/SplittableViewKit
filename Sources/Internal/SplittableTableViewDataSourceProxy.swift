@@ -29,9 +29,8 @@ final class SplittableTableViewDataSourceProxy: _NSObjectProxy, SplittableTableV
         self.proxy = proxy
     }
 
-
-    func splittableViewForLeftView(topView: UIView, isLandscape: Bool) -> UIView {
-        return dataSource?.splittableViewForLeftView(topView: topView, isLandscape: isLandscape) ?? Undefined.object()
+    func splittableContainerViewFor(topView: UIView, layoutType: LayoutType) -> UIView{
+        return dataSource?.splittableContainerViewFor(topView: topView, layoutType: layoutType) ?? Undefined.object()
     }
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {

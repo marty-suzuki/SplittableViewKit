@@ -18,15 +18,57 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="18y-Ej-EaW" customClass="SplittableTableView" customModule="SplittableViewKit">
-                                <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                                <rect key="frame" x="0.0" y="0.0" width="375" height="623"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                             </view>
+                            <toolbar opaque="NO" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="zQM-45-dCk">
+                                <rect key="frame" x="0.0" y="623" width="375" height="44"/>
+                                <items>
+                                    <barButtonItem style="plain" systemItem="flexibleSpace" id="0QL-nD-hzJ"/>
+                                    <barButtonItem style="plain" id="hSd-fh-eVp">
+                                        <view key="customView" contentMode="scaleToFill" id="q1e-n0-bhF">
+                                            <rect key="frame" x="16" y="5.5" width="343" height="33"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                            <subviews>
+                                                <stackView opaque="NO" contentMode="scaleToFill" spacing="20" translatesAutoresizingMaskIntoConstraints="NO" id="vnN-LH-TVS">
+                                                    <rect key="frame" x="0.0" y="0.0" width="343" height="33"/>
+                                                    <subviews>
+                                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="isFixedTop" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="WIg-uO-VNS">
+                                                            <rect key="frame" x="0.0" y="0.0" width="274" height="33"/>
+                                                            <fontDescription key="fontDescription" type="boldSystem" pointSize="18"/>
+                                                            <nil key="textColor"/>
+                                                            <nil key="highlightedColor"/>
+                                                        </label>
+                                                        <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="GI6-BH-ww2">
+                                                            <rect key="frame" x="294" y="0.0" width="51" height="33"/>
+                                                            <connections>
+                                                                <action selector="switchChanged:" destination="BYZ-38-t0r" eventType="valueChanged" id="Gkl-xQ-Omn"/>
+                                                            </connections>
+                                                        </switch>
+                                                    </subviews>
+                                                </stackView>
+                                            </subviews>
+                                            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                            <constraints>
+                                                <constraint firstAttribute="trailing" secondItem="vnN-LH-TVS" secondAttribute="trailing" id="cxk-p3-p6c"/>
+                                                <constraint firstAttribute="bottom" secondItem="vnN-LH-TVS" secondAttribute="bottom" id="sgM-7t-jwe"/>
+                                                <constraint firstItem="vnN-LH-TVS" firstAttribute="leading" secondItem="q1e-n0-bhF" secondAttribute="leading" id="uoK-vb-aJB"/>
+                                                <constraint firstItem="vnN-LH-TVS" firstAttribute="top" secondItem="q1e-n0-bhF" secondAttribute="top" id="vA5-Mo-wfb"/>
+                                            </constraints>
+                                        </view>
+                                    </barButtonItem>
+                                    <barButtonItem style="plain" systemItem="flexibleSpace" id="rjz-jj-aMO"/>
+                                </items>
+                            </toolbar>
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
-                            <constraint firstItem="18y-Ej-EaW" firstAttribute="bottom" secondItem="6Tk-OE-BBY" secondAttribute="bottom" id="DKm-FD-xRU"/>
+                            <constraint firstItem="zQM-45-dCk" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" id="3WD-Wp-8YE"/>
                             <constraint firstItem="18y-Ej-EaW" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" id="PFN-cb-8Nd"/>
                             <constraint firstItem="18y-Ej-EaW" firstAttribute="trailing" secondItem="6Tk-OE-BBY" secondAttribute="trailing" id="Qbg-bO-lPj"/>
+                            <constraint firstItem="zQM-45-dCk" firstAttribute="trailing" secondItem="8bC-Xf-vdC" secondAttribute="trailing" id="Xar-el-19J"/>
+                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="bottom" secondItem="zQM-45-dCk" secondAttribute="bottom" id="i0b-W0-Xk7"/>
+                            <constraint firstItem="zQM-45-dCk" firstAttribute="top" secondItem="18y-Ej-EaW" secondAttribute="bottom" id="yEc-A5-2Lc"/>
                             <constraint firstItem="18y-Ej-EaW" firstAttribute="top" secondItem="8bC-Xf-vdC" secondAttribute="top" id="yZH-wr-d5o"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>

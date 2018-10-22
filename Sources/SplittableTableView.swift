@@ -57,7 +57,11 @@ public final class SplittableTableView: UIView {
         return traitCollection.verticalSizeClass == .compact
     }
 
-    public var isFixedTop: Bool
+    public var isFixedTop: Bool {
+        didSet {
+            updateLayout()
+        }
+    }
 
     public var ratio: Ratio
 
@@ -74,7 +78,7 @@ public final class SplittableTableView: UIView {
 
     required public init?(coder aDecoder: NSCoder) {
         self.ratio = .default
-         self.isFixedTop = true
+         self.isFixedTop = false
         self._tableView = UITableView(frame: .zero, style: .plain)
         super.init(coder: aDecoder)
         setupViews()
@@ -128,7 +132,7 @@ public final class SplittableTableView: UIView {
         _topViewAndBottomViewHeightConstraint.isActive = isFixedTop && !isLandscape
     }
 
-    public override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+    private func updateLayout() {
         if _tableView.numberOfRows(inSection: 0) > 0 {
             _leftView.subviews.forEach { $0.removeFromSuperview() }
             _tableView.reloadData()
@@ -142,7 +146,10 @@ public final class SplittableTableView: UIView {
         _leftViewAndRightViewWidthConstraint.isActive = isLandscape
 
         _topViewAndBottomViewHeightConstraint.isActive = isFixedTop && !isLandscape
+    }
 
+    public override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        updateLayout()
         super.traitCollectionDidChange(previousTraitCollection)
     }
 
@@ -205,8 +212,8 @@ extension SplittableTableView: SplittableTableViewDataSourceProxyDataSource {
             topView?.removeFromSuperview()
             topView = {
                 let topView = makeTopView(with: cell)
-                let view = dataSource?.splittableViewForLeftView(topView: topView, isLandscape: isLandscape)
-                    ?? Undefined.object()
+                let layoutType: LayoutType = isLandscape ? .left : .fixedTop
+                let view = dataSource?.splittableContainerViewFor(topView: topView, layoutType: layoutType) ?? Undefined.object()
                 view.translatesAutoresizingMaskIntoConstraints = false
                 _leftView.addSubview(view)
                 NSLayoutConstraint.activate([
