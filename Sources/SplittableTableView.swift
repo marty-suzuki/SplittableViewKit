@@ -1,5 +1,5 @@
 //
-//  SplittableTableViewController.swift
+//  SplittableTableView.swift
 //  SplittableViewKit
 //
 //  Created by marty-suzuki on 2018/10/21.
@@ -8,8 +8,9 @@
 
 import UIKit
 
-open class SplittableTableViewController: UIViewController {
+public final class SplittableTableView: UIView {
 
+    private let _tableView: UITableView
     private let _leftView = UIView(frame: .zero)
     private let _stackView = UIStackView(frame: .zero)
     private lazy var _leftViewAndRightViewWidthConstraint = makeLeftViewAndRightViewWidthConstraint()
@@ -36,7 +37,13 @@ open class SplittableTableViewController: UIViewController {
     }
     private lazy var _delegateProxy = SplittableTableViewDelegateProxy(proxy: self)
 
-    public let tableView = UITableView(frame: .zero)
+
+    /// - note: Do not set `dataSource` and `delegate` directly.
+    ///         Please use `SplittableTableView.dataSource` or `SplittableTableView.delegate`
+    public var rightView: UITableView {
+        return _tableView
+    }
+
     public var leftView: UIView? {
         if isLandscape {
             return _leftView
@@ -51,56 +58,58 @@ open class SplittableTableViewController: UIViewController {
 
     public var ratio: Ratio
 
-    public init(ratio: Ratio = .default) {
+    public init(frame: CGRect, style: UITableView.Style = .plain, ratio: Ratio = .default) {
         self.ratio = ratio
-        super.init(nibName: nil, bundle: nil)
+        self._tableView = UITableView(frame: frame, style: style)
+        super.init(frame: frame)
+        setupViews()
     }
 
     required public init?(coder aDecoder: NSCoder) {
         self.ratio = .default
+        self._tableView = UITableView(frame: .zero, style: .plain)
         super.init(coder: aDecoder)
+        setupViews()
     }
 
     private func makeLeftViewAndRightViewWidthConstraint() -> NSLayoutConstraint {
         return NSLayoutConstraint(item: _leftView,
                                   attribute: .width,
                                   relatedBy: .equal,
-                                  toItem: tableView,
+                                  toItem: _tableView,
                                   attribute: .width,
                                   multiplier: ratio.left / ratio.right,
                                   constant: 0)
     }
 
-    open override func viewDidLoad() {
-        super.viewDidLoad()
-
-        view.backgroundColor = .white
+    private func setupViews() {
+        backgroundColor = .white
 
         _stackView.translatesAutoresizingMaskIntoConstraints = false
-        view.addSubview(_stackView)
+        addSubview(_stackView)
 
         NSLayoutConstraint.activate([
-            view.topAnchor.constraint(equalTo: _stackView.topAnchor),
-            view.safeAreaLayoutGuideIfExists.leftAnchor.constraint(equalTo: _stackView.leftAnchor),
-            view.safeAreaLayoutGuideIfExists.rightAnchor.constraint(equalTo: _stackView.rightAnchor),
-            view.bottomAnchor.constraint(equalTo: _stackView.bottomAnchor)
+            topAnchor.constraint(equalTo: _stackView.topAnchor),
+            safeAreaLayoutGuideIfExists.leftAnchor.constraint(equalTo: _stackView.leftAnchor),
+            safeAreaLayoutGuideIfExists.rightAnchor.constraint(equalTo: _stackView.rightAnchor),
+            bottomAnchor.constraint(equalTo: _stackView.bottomAnchor)
         ])
 
         _leftView.translatesAutoresizingMaskIntoConstraints = false
         _stackView.addArrangedSubview(_leftView)
-        tableView.translatesAutoresizingMaskIntoConstraints = false
-        _stackView.addArrangedSubview(tableView)
+        _tableView.translatesAutoresizingMaskIntoConstraints = false
+        _stackView.addArrangedSubview(_tableView)
 
-        tableView.dataSource = _dataSourceProxy
-        tableView.delegate = _delegateProxy
-        tableView.register(UITableViewCell.self,
-                           forCellReuseIdentifier: Const.cellReuseIdentifier)
+        _tableView.dataSource = _dataSourceProxy
+        _tableView.delegate = _delegateProxy
+        _tableView.register(UITableViewCell.self,
+                            forCellReuseIdentifier: Const.cellReuseIdentifier)
     }
 
-    open override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
-        if tableView.numberOfRows(inSection: 0) > 0 {
+    public override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        if _tableView.numberOfRows(inSection: 0) > 0 {
             _leftView.subviews.forEach { $0.removeFromSuperview() }
-            tableView.reloadData()
+            _tableView.reloadData()
         }
         if !isLandscape {
             topView?.removeFromSuperview()
@@ -160,8 +169,7 @@ open class SplittableTableViewController: UIViewController {
     }
 }
 
-extension SplittableTableViewController: SplittableTableViewDataSourceProxyDataSource {
-
+extension SplittableTableView: SplittableTableViewDataSourceProxyDataSource {
     private func isLandscapeTopIndexPath(_ indexPath: IndexPath) -> Bool {
         return indexPath.section == 0 && indexPath.row == 0 && isLandscape
     }
@@ -184,7 +192,7 @@ extension SplittableTableViewController: SplittableTableViewDataSourceProxyDataS
     }
 }
 
-extension SplittableTableViewController: SplittableTableViewDelegateProxyDelegate {
+extension SplittableTableView: SplittableTableViewDelegateProxyDelegate {
     func proxy(tableView: UITableView, heightForRowAt indexPath: IndexPath, height: CGFloat) -> CGFloat {
         if isLandscapeTopIndexPath(indexPath) {
             return CGFloat.leastNonzeroMagnitude
@@ -194,7 +202,7 @@ extension SplittableTableViewController: SplittableTableViewDelegateProxyDelegat
     }
 }
 
-extension SplittableTableViewController {
+extension SplittableTableView {
     private enum Const {
         static let cellReuseIdentifier = "SplittableTableViewController.UITableViewCell"
     }

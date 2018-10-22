@@ -8,11 +8,13 @@
 
 import SplittableViewKit
 
-final class ViewController: SplittableTableViewController {
+final class ViewController: UIViewController {
 
     private enum Const {
         static let cellReuseIdentifier = "Cell"
     }
+
+    @IBOutlet weak var splittableTableView: SplittableTableView!
 
     private enum RowStyle {
         case thumbnail
@@ -31,18 +33,18 @@ final class ViewController: SplittableTableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        dataSource = self
-        tableView.register(UITableViewCell.self, forCellReuseIdentifier: Const.cellReuseIdentifier)
-        tableView.register(UINib(nibName: "ThumbnailViewCell", bundle: nil),
-                           forCellReuseIdentifier: "ThumbnailViewCell")
-        tableView.register(UINib(nibName: "TitleViewCell", bundle: nil),
-                           forCellReuseIdentifier: "TitleViewCell")
+        splittableTableView.dataSource = self
+        splittableTableView.rightView.register(UITableViewCell.self, forCellReuseIdentifier: Const.cellReuseIdentifier)
+        splittableTableView.rightView.register(UINib(nibName: "ThumbnailViewCell", bundle: nil),
+                                               forCellReuseIdentifier: "ThumbnailViewCell")
+        splittableTableView.rightView.register(UINib(nibName: "TitleViewCell", bundle: nil),
+                                               forCellReuseIdentifier: "TitleViewCell")
 
-        tableView.register(UINib(nibName: "IntroductionViewCell", bundle: nil),
-                           forCellReuseIdentifier: "IntroductionViewCell")
+        splittableTableView.rightView.register(UINib(nibName: "IntroductionViewCell", bundle: nil),
+                                               forCellReuseIdentifier: "IntroductionViewCell")
 
-        tableView.register(UINib(nibName: "InformationViewCell", bundle: nil),
-                           forCellReuseIdentifier: "InformationViewCell")
+        splittableTableView.rightView.register(UINib(nibName: "InformationViewCell", bundle: nil),
+                                               forCellReuseIdentifier: "InformationViewCell")
     }
 }
 

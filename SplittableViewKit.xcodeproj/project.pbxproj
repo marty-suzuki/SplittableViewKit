@@ -18,7 +18,7 @@
 		9D78E646217C1CB400D2C918 /* UIView.extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D78E645217C1CB400D2C918 /* UIView.extension.swift */; };
 		9D78E648217C22F700D2C918 /* ConstraintReplacer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D78E647217C22F700D2C918 /* ConstraintReplacer.swift */; };
 		9D78E64A217C5DB400D2C918 /* SplittableDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D78E649217C5DB400D2C918 /* SplittableDataSource.swift */; };
-		9DB4EFF6217C131900F6D41F /* SplittableTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DB4EFF5217C131900F6D41F /* SplittableTableViewController.swift */; };
+		9DB4EFF6217C131900F6D41F /* SplittableTableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DB4EFF5217C131900F6D41F /* SplittableTableView.swift */; };
 		9DB4EFF9217C134900F6D41F /* ConstraintBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DB4EFF8217C134900F6D41F /* ConstraintBuilder.swift */; };
 /* End PBXBuildFile section */
 
@@ -36,7 +36,7 @@
 		9D78E645217C1CB400D2C918 /* UIView.extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIView.extension.swift; sourceTree = "<group>"; };
 		9D78E647217C22F700D2C918 /* ConstraintReplacer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConstraintReplacer.swift; sourceTree = "<group>"; };
 		9D78E649217C5DB400D2C918 /* SplittableDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplittableDataSource.swift; sourceTree = "<group>"; };
-		9DB4EFF5217C131900F6D41F /* SplittableTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplittableTableViewController.swift; sourceTree = "<group>"; };
+		9DB4EFF5217C131900F6D41F /* SplittableTableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplittableTableView.swift; sourceTree = "<group>"; };
 		9DB4EFF8217C134900F6D41F /* ConstraintBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConstraintBuilder.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -73,7 +73,7 @@
 				9DB4EFF7217C133600F6D41F /* Internal */,
 				9D02EF21217C11FC00D41514 /* SplittableViewKit.h */,
 				9D02EF22217C11FC00D41514 /* Info.plist */,
-				9DB4EFF5217C131900F6D41F /* SplittableTableViewController.swift */,
+				9DB4EFF5217C131900F6D41F /* SplittableTableView.swift */,
 				9D78E649217C5DB400D2C918 /* SplittableDataSource.swift */,
 				37D51EA0217D9CFB0073A7BF /* _NSObjectProxy.h */,
 				37D51EA1217D9CFB0073A7BF /* _NSObjectProxy.m */,
@@ -183,7 +183,7 @@
 				9D78E64A217C5DB400D2C918 /* SplittableDataSource.swift in Sources */,
 				37B72E2F217DA3A3001C4B19 /* Undefined.swift in Sources */,
 				37D51EA5217D9DC70073A7BF /* SplittableTableViewDataSource.swift in Sources */,
-				9DB4EFF6217C131900F6D41F /* SplittableTableViewController.swift in Sources */,
+				9DB4EFF6217C131900F6D41F /* SplittableTableView.swift in Sources */,
 				9D78E648217C22F700D2C918 /* ConstraintReplacer.swift in Sources */,
 				9D78E646217C1CB400D2C918 /* UIView.extension.swift in Sources */,
 				37D51EA3217D9CFB0073A7BF /* _NSObjectProxy.m in Sources */,
