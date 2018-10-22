@@ -78,9 +78,7 @@
 				37D51EA0217D9CFB0073A7BF /* _NSObjectProxy.h */,
 				37D51EA1217D9CFB0073A7BF /* _NSObjectProxy.m */,
 				37D51EA4217D9DC70073A7BF /* SplittableTableViewDataSource.swift */,
-				37D51EA6217D9DF60073A7BF /* SplittableTableViewDataSourceProxy.swift */,
 				37B72E30217DA94D001C4B19 /* SplittableTableViewDelegate.swift */,
-				37B72E32217DA969001C4B19 /* SplittableTableViewDelegateProxy.swift */,
 			);
 			path = Sources;
 			sourceTree = "<group>";
@@ -88,6 +86,8 @@
 		9DB4EFF7217C133600F6D41F /* Internal */ = {
 			isa = PBXGroup;
 			children = (
+				37D51EA6217D9DF60073A7BF /* SplittableTableViewDataSourceProxy.swift */,
+				37B72E32217DA969001C4B19 /* SplittableTableViewDelegateProxy.swift */,
 				9DB4EFF8217C134900F6D41F /* ConstraintBuilder.swift */,
 				9D78E645217C1CB400D2C918 /* UIView.extension.swift */,
 				9D78E647217C22F700D2C918 /* ConstraintReplacer.swift */,
