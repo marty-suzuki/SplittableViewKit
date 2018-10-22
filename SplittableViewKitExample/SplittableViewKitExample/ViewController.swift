@@ -34,7 +34,7 @@ final class ViewController: UIViewController {
         super.viewDidLoad()
 
         splittableTableView.dataSource = self
-        splittableTableView.rightView.register(UITableViewCell.self, forCellReuseIdentifier: Const.cellReuseIdentifier)
+        
         splittableTableView.rightView.register(UINib(nibName: "ThumbnailViewCell", bundle: nil),
                                                forCellReuseIdentifier: "ThumbnailViewCell")
         splittableTableView.rightView.register(UINib(nibName: "TitleViewCell", bundle: nil),

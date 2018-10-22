@@ -179,9 +179,14 @@ extension SplittableTableView: SplittableTableViewDataSourceProxyDataSource {
             if topView == nil {
                 let topView = makeTopView(with: cell)
                 let view = dataSource?.splittableViewForLeftView(topView: topView) ?? Undefined.object()
+                view.translatesAutoresizingMaskIntoConstraints = false
                 _leftView.addSubview(view)
-                view.frame = _leftView.bounds
-                view.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+                NSLayoutConstraint.activate([
+                    view.topAnchor.constraint(equalTo: _leftView.topAnchor, constant: 0),
+                    view.leftAnchor.constraint(equalTo: _leftView.leftAnchor, constant: 0),
+                    view.rightAnchor.constraint(equalTo: _leftView.rightAnchor, constant: 0),
+                    view.bottomAnchor.constraint(equalTo: _leftView.bottomAnchor, constant: 0)
+                ])
                 self.topView = topView
             }
             cell.removeFromSuperview()
