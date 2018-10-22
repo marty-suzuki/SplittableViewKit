@@ -9,13 +9,13 @@
 Pod::Spec.new do |s|
   s.name             = 'SplittableViewKit'
   s.version          = '0.1.0'
-  s.summary          = 'A short description of SplittableViewKit.'
+  s.summary          = 'UITableView based splittable view.'
   s.homepage         = 'https://github.com/marty-suzuki/SplittableViewKit'
   s.license          = { :type => 'MIT', :file => 'LICENSE' }
   s.author           = { 'marty-suzuki' => 's1180183@gmail.com' }
   s.source           = { :git => 'https://github.com/marty-suzuki/SplittableViewKit.git', :tag => s.version.to_s }
   s.social_media_url = 'https://twitter.com/marty_suzuki'
   s.ios.deployment_target = '9.0'
-  s.source_files = 'Sources/**/*.{swift}'
+  s.source_files = 'Sources/**/*.{swift,h,m}'
   s.swift_version = '4.2'
 end
