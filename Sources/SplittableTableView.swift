@@ -14,6 +14,7 @@ public final class SplittableTableView: UIView {
     private let _leftView = UIView(frame: .zero)
     private let _stackView = UIStackView(frame: .zero)
     private lazy var _leftViewAndRightViewWidthConstraint = makeLeftViewAndRightViewWidthConstraint()
+    private lazy var _topViewAndBottomViewHeightConstraint = makeTopViewAndBottomViewHeightConstraint()
 
     private var topView: UIView?
 
@@ -56,10 +57,16 @@ public final class SplittableTableView: UIView {
         return traitCollection.verticalSizeClass == .compact
     }
 
+    public var isFixedTop: Bool
+
     public var ratio: Ratio
 
-    public init(frame: CGRect, style: UITableView.Style = .plain, ratio: Ratio = .default) {
+    public init(frame: CGRect,
+                style: UITableView.Style = .plain,
+                isFixedTop: Bool = false,
+                ratio: Ratio = .default) {
         self.ratio = ratio
+        self.isFixedTop = isFixedTop
         self._tableView = UITableView(frame: frame, style: style)
         super.init(frame: frame)
         setupViews()
@@ -67,6 +74,7 @@ public final class SplittableTableView: UIView {
 
     required public init?(coder aDecoder: NSCoder) {
         self.ratio = .default
+         self.isFixedTop = true
         self._tableView = UITableView(frame: .zero, style: .plain)
         super.init(coder: aDecoder)
         setupViews()
@@ -80,6 +88,18 @@ public final class SplittableTableView: UIView {
                                   attribute: .width,
                                   multiplier: ratio.left / ratio.right,
                                   constant: 0)
+    }
+
+    private func makeTopViewAndBottomViewHeightConstraint() -> NSLayoutConstraint {
+        let constraint = NSLayoutConstraint(item: _leftView,
+                                            attribute: .height,
+                                            relatedBy: .equal,
+                                            toItem: _tableView,
+                                            attribute: .height,
+                                            multiplier: 1,
+                                            constant: 0)
+        constraint.priority = .defaultLow
+        return constraint
     }
 
     private func setupViews() {
@@ -104,6 +124,8 @@ public final class SplittableTableView: UIView {
         _tableView.delegate = _delegateProxy
         _tableView.register(UITableViewCell.self,
                             forCellReuseIdentifier: Const.cellReuseIdentifier)
+
+        _topViewAndBottomViewHeightConstraint.isActive = isFixedTop && !isLandscape
     }
 
     public override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
@@ -111,15 +133,15 @@ public final class SplittableTableView: UIView {
             _leftView.subviews.forEach { $0.removeFromSuperview() }
             _tableView.reloadData()
         }
-        if !isLandscape {
-            topView?.removeFromSuperview()
-            topView = nil
-        }
-        _leftView.isHidden = !isLandscape
 
+        _leftView.isHidden = !(isLandscape || isFixedTop)
+
+        _stackView.axis = isLandscape ? .horizontal : .vertical
         _leftViewAndRightViewWidthConstraint.isActive = false
         _leftViewAndRightViewWidthConstraint = makeLeftViewAndRightViewWidthConstraint()
         _leftViewAndRightViewWidthConstraint.isActive = isLandscape
+
+        _topViewAndBottomViewHeightConstraint.isActive = isFixedTop && !isLandscape
 
         super.traitCollectionDidChange(previousTraitCollection)
     }
@@ -174,11 +196,17 @@ extension SplittableTableView: SplittableTableViewDataSourceProxyDataSource {
         return indexPath.section == 0 && indexPath.row == 0 && isLandscape
     }
 
+    private func shouldHandleFixedTop(_ indexPath: IndexPath) -> Bool {
+        return indexPath.section == 0 && indexPath.row == 0 && isFixedTop
+    }
+
     func proxy(tableView: UITableView, cellForRowAt indexPath: IndexPath, cell: UITableViewCell) -> UITableViewCell {
-        if isLandscapeTopIndexPath(indexPath) {
-            if topView == nil {
+        if isLandscapeTopIndexPath(indexPath) || shouldHandleFixedTop(indexPath) {
+            topView?.removeFromSuperview()
+            topView = {
                 let topView = makeTopView(with: cell)
-                let view = dataSource?.splittableViewForLeftView(topView: topView) ?? Undefined.object()
+                let view = dataSource?.splittableViewForLeftView(topView: topView, isLandscape: isLandscape)
+                    ?? Undefined.object()
                 view.translatesAutoresizingMaskIntoConstraints = false
                 _leftView.addSubview(view)
                 NSLayoutConstraint.activate([
@@ -187,8 +215,8 @@ extension SplittableTableView: SplittableTableViewDataSourceProxyDataSource {
                     view.rightAnchor.constraint(equalTo: _leftView.rightAnchor, constant: 0),
                     view.bottomAnchor.constraint(equalTo: _leftView.bottomAnchor, constant: 0)
                 ])
-                self.topView = topView
-            }
+                return topView
+            }()
             cell.removeFromSuperview()
             return tableView.dequeueReusableCell(withIdentifier: Const.cellReuseIdentifier) ?? Undefined.object()
         } else {
@@ -199,7 +227,7 @@ extension SplittableTableView: SplittableTableViewDataSourceProxyDataSource {
 
 extension SplittableTableView: SplittableTableViewDelegateProxyDelegate {
     func proxy(tableView: UITableView, heightForRowAt indexPath: IndexPath, height: CGFloat) -> CGFloat {
-        if isLandscapeTopIndexPath(indexPath) {
+        if isLandscapeTopIndexPath(indexPath) || shouldHandleFixedTop(indexPath) {
             return CGFloat.leastNonzeroMagnitude
         } else {
             return height

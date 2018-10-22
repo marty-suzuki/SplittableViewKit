@@ -9,5 +9,5 @@
 import UIKit
 
 public protocol SplittableDataSource: AnyObject {
-    func splittableViewForLeftView(topView: UIView) -> UIView
+    func splittableViewForLeftView(topView: UIView, isLandscape: Bool) -> UIView
 }

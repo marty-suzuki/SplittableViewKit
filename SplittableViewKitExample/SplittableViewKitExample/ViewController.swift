@@ -68,15 +68,24 @@ extension ViewController: SplittableTableViewDataSource {
         }
     }
 
-    func splittableViewForLeftView(topView: UIView) -> UIView {
+    func splittableViewForLeftView(topView: UIView, isLandscape: Bool) -> UIView {
         let view = UIView(frame: .zero)
         topView.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(topView)
-        NSLayoutConstraint.activate([
-            view.leadingAnchor.constraint(equalTo: topView.leadingAnchor, constant: 0),
-            view.trailingAnchor.constraint(equalTo: topView.trailingAnchor, constant: 0),
-            view.centerYAnchor.constraint(equalTo: topView.centerYAnchor, constant: 0)
-        ])
+        if isLandscape {
+            NSLayoutConstraint.activate([
+                view.leadingAnchor.constraint(equalTo: topView.leadingAnchor, constant: 0),
+                view.trailingAnchor.constraint(equalTo: topView.trailingAnchor, constant: 0),
+                view.centerYAnchor.constraint(equalTo: topView.centerYAnchor, constant: 0)
+            ])
+        } else {
+            NSLayoutConstraint.activate([
+                view.safeAreaLayoutGuide.topAnchor.constraint(equalTo: topView.topAnchor, constant: 0),
+                view.leftAnchor.constraint(equalTo: topView.leftAnchor, constant: 0),
+                view.rightAnchor.constraint(equalTo: topView.rightAnchor, constant: 0),
+                view.bottomAnchor.constraint(equalTo: topView.bottomAnchor, constant: 0)
+            ])
+        }
         return view
     }
 }
