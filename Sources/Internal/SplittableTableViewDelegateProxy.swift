@@ -8,7 +8,7 @@
 
 import UIKit
 
-protocol SplittableTableViewDelegateProxyDelegate: AnyObject {
+protocol _SplittableTableViewDelegate: AnyObject {
     func proxy(tableView: UITableView, heightForRowAt indexPath: IndexPath, height: CGFloat) -> CGFloat
 }
 
@@ -23,9 +23,9 @@ final class SplittableTableViewDelegateProxy: _NSObjectProxy, SplittableTableVie
         }
     }
 
-    private weak var proxy: SplittableTableViewDelegateProxyDelegate?
+    private weak var proxy: _SplittableTableViewDelegate?
 
-    init(proxy: SplittableTableViewDelegateProxyDelegate) {
+    init(proxy: _SplittableTableViewDelegate) {
         self.proxy = proxy
     }
 

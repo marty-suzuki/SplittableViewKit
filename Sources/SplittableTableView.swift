@@ -78,7 +78,7 @@ public final class SplittableTableView: UIView {
 
     required public init?(coder aDecoder: NSCoder) {
         self.ratio = .default
-         self.isFixedTop = false
+        self.isFixedTop = false
         self._tableView = UITableView(frame: .zero, style: .plain)
         super.init(coder: aDecoder)
         setupViews()
@@ -198,7 +198,7 @@ public final class SplittableTableView: UIView {
     }
 }
 
-extension SplittableTableView: SplittableTableViewDataSourceProxyDataSource {
+extension SplittableTableView: _SplittableTableViewDataSource {
     private func isLandscapeTopIndexPath(_ indexPath: IndexPath) -> Bool {
         return indexPath.section == 0 && indexPath.row == 0 && isLandscape
     }
@@ -232,7 +232,7 @@ extension SplittableTableView: SplittableTableViewDataSourceProxyDataSource {
     }
 }
 
-extension SplittableTableView: SplittableTableViewDelegateProxyDelegate {
+extension SplittableTableView: _SplittableTableViewDelegate {
     func proxy(tableView: UITableView, heightForRowAt indexPath: IndexPath, height: CGFloat) -> CGFloat {
         if isLandscapeTopIndexPath(indexPath) || shouldHandleFixedTop(indexPath) {
             return CGFloat.leastNonzeroMagnitude
@@ -244,7 +244,7 @@ extension SplittableTableView: SplittableTableViewDelegateProxyDelegate {
 
 extension SplittableTableView {
     private enum Const {
-        static let cellReuseIdentifier = "SplittableTableViewController.UITableViewCell"
+        static let cellReuseIdentifier = "SplittableTableView.UITableViewCell"
     }
 
     public struct Ratio {

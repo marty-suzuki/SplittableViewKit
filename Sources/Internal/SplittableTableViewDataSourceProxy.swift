@@ -8,7 +8,7 @@
 
 import UIKit
 
-protocol SplittableTableViewDataSourceProxyDataSource: AnyObject {
+protocol _SplittableTableViewDataSource: AnyObject {
     func proxy(tableView: UITableView, cellForRowAt indexPath: IndexPath, cell: UITableViewCell) -> UITableViewCell
 }
 
@@ -23,9 +23,9 @@ final class SplittableTableViewDataSourceProxy: _NSObjectProxy, SplittableTableV
         }
     }
 
-    private weak var proxy: SplittableTableViewDataSourceProxyDataSource?
+    private weak var proxy: _SplittableTableViewDataSource?
 
-    init(proxy: SplittableTableViewDataSourceProxyDataSource) {
+    init(proxy: _SplittableTableViewDataSource) {
         self.proxy = proxy
     }
 
