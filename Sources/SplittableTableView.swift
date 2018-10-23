@@ -59,6 +59,9 @@ public final class SplittableTableView: UIView {
 
     public var isFixedTop: Bool {
         didSet {
+            if isLandscape {
+                return
+            }
             updateLayout()
         }
     }
